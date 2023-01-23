@@ -3,32 +3,32 @@ package repository
 import (
 	"context"
 	"github.com/gomodule/redigo/redis"
-	"github.com/halilylm/microservice/domain"
+	"github.com/halilylm/microservice/product"
 	"sync"
 	"time"
 )
 
 type MockCacheRepository struct {
 	mu       sync.Mutex
-	products map[string]*domain.Product
+	products map[string]*product.Product
 }
 
-func NewMockCacheRepository(products map[string]*domain.Product) *MockCacheRepository {
+func NewMockCacheRepository(products map[string]*product.Product) *MockCacheRepository {
 	if products == nil {
-		products = make(map[string]*domain.Product)
+		products = make(map[string]*product.Product)
 	}
 	return &MockCacheRepository{products: products}
 }
 
-func (mcp *MockCacheRepository) Products() map[string]*domain.Product {
+func (mcp *MockCacheRepository) Products() map[string]*product.Product {
 	return mcp.products
 }
 
 func (mcp *MockCacheRepository) CleanProducts() {
-	mcp.products = make(map[string]*domain.Product)
+	mcp.products = make(map[string]*product.Product)
 }
 
-func (mcp *MockCacheRepository) SetProduct(ctx context.Context, key string, expire time.Duration, product *domain.Product) error {
+func (mcp *MockCacheRepository) SetProduct(ctx context.Context, key string, expire time.Duration, product *product.Product) error {
 	time.AfterFunc(expire, func() {
 		mcp.mu.Lock()
 		defer mcp.mu.Unlock()
@@ -50,7 +50,7 @@ func (mcp *MockCacheRepository) DeleteProduct(ctx context.Context, key string) e
 	return nil
 }
 
-func (mcp *MockCacheRepository) GetProduct(ctx context.Context, key string) (*domain.Product, error) {
+func (mcp *MockCacheRepository) GetProduct(ctx context.Context, key string) (*product.Product, error) {
 	mcp.mu.Lock()
 	defer mcp.mu.Unlock()
 	p, ok := mcp.products[key]

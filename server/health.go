@@ -1,12 +1,25 @@
 package server
 
 import (
-	"github.com/go-chi/chi/v5"
+	"context"
+	"encoding/json"
+	"github.com/halilylm/microservice/pkg/rest"
 	"net/http"
 )
 
-func Health(mux chi.Router) {
-	mux.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+type pinger interface {
+	Ping(ctx context.Context) error
+}
 
-	})
+func Health(pingers ...pinger) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		for _, p := range pingers {
+			if err := p.Ping(context.TODO()); err != nil {
+				restErr := rest.NewStatusBadGateway()
+				w.WriteHeader(restErr.Code)
+				json.NewEncoder(w).Encode(restErr)
+				return
+			}
+		}
+	}
 }

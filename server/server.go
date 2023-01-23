@@ -15,18 +15,18 @@ type Server struct {
 	address string
 	mux     chi.Router
 	server  *http.Server
-	logger  *zap.SugaredLogger
+	logger  *zap.Logger
 }
 
 type Options struct {
 	Host   string
 	Port   int
-	Logger *zap.SugaredLogger
+	Logger *zap.Logger
 }
 
 func New(opts *Options) *Server {
 	if opts.Logger == nil {
-		opts.Logger = zap.NewNop().Sugar()
+		opts.Logger = zap.NewNop()
 	}
 	mux := chi.NewMux()
 	address := net.JoinHostPort(opts.Host, strconv.Itoa(opts.Port))
@@ -47,7 +47,8 @@ func New(opts *Options) *Server {
 }
 
 func (s *Server) Start() error {
-	s.logger.Info("starting the server at ", s.address)
+	s.mapRoutes()
+	s.logger.Info("starting the server at ", zap.String("address", s.address))
 	if err := s.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}

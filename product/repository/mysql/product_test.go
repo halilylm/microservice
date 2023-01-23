@@ -4,14 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/halilylm/microservice/domain"
+	"github.com/halilylm/microservice/product"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
 )
 
 func TestProductRepository_Insert(t *testing.T) {
-	product := domain.Product{
+	newProduct := product.Product{
 		Name:  "watch",
 		Price: 15,
 	}
@@ -20,9 +20,9 @@ func TestProductRepository_Insert(t *testing.T) {
 		_ = db.Close()
 	}()
 	prep := mock.ExpectPrepare(insertQuery)
-	prep.ExpectExec().WithArgs(product.Name, product.Price).WillReturnResult(sqlmock.NewResult(1, 1))
+	prep.ExpectExec().WithArgs(newProduct.Name, newProduct.Price).WillReturnResult(sqlmock.NewResult(1, 1))
 	p := NewProductRepository(db)
-	prod, err := p.Insert(context.TODO(), &product)
+	prod, err := p.Insert(context.TODO(), &newProduct)
 	assert.NoError(t, err)
 	assert.EqualValues(t, 1, prod.ID)
 }
@@ -57,7 +57,7 @@ func TestProductRepository_Delete(t *testing.T) {
 }
 
 func TestProductRepository_Update(t *testing.T) {
-	product := domain.Product{
+	product := product.Product{
 		ID:    1,
 		Name:  "banana",
 		Price: 5,

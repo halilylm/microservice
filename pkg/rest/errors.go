@@ -7,8 +7,9 @@ import (
 )
 
 var (
-	ErrInternalServer = errors.New("internal server error")
-	ErrNotFound       = errors.New("requested content not found")
+	ErrInternalServer   = errors.New("internal server error")
+	ErrNotFound         = errors.New("requested content not found")
+	ErrStatusBadGateway = errors.New("status bad gateway")
 )
 
 type HTTPError struct {
@@ -38,5 +39,12 @@ func NewBadRequest(msg string) *HTTPError {
 	return &HTTPError{
 		Code:    http.StatusBadRequest,
 		Message: msg,
+	}
+}
+
+func NewStatusBadGateway() *HTTPError {
+	return &HTTPError{
+		Code:    http.StatusBadGateway,
+		Message: ErrStatusBadGateway.Error(),
 	}
 }

@@ -9,7 +9,9 @@ COPY go.sum .
 
 RUN go mod download
 
+COPY .git/ ./.git/
 COPY . .
+
 
 RUN CGO_ENABLED=0 go build -ldflags="-X 'main.release=`git rev-parse --short=8 HEAD`'" -o /bin/server ./app
 

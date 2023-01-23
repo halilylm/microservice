@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
@@ -71,6 +72,6 @@ func (sd *MysqlConn) Connect() error {
 	return nil
 }
 
-func (sd *MysqlConn) Ping() error {
+func (sd *MysqlConn) Ping(ctx context.Context) error {
 	return sd.DB.Ping()
 }

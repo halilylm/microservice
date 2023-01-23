@@ -2,8 +2,8 @@ package usecase
 
 import (
 	"context"
-	"github.com/halilylm/microservice/domain"
 	"github.com/halilylm/microservice/pkg/rest"
+	"github.com/halilylm/microservice/product"
 	"github.com/halilylm/microservice/product/repository"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
@@ -16,7 +16,7 @@ func TestProductUC_CreateProduct(t *testing.T) {
 	cache := repository.NewMockCacheRepository(nil)
 	uc := NewProductUC(repo, cache, zap.NewNop())
 	t.Run("creates a product", func(t *testing.T) {
-		p := domain.Product{
+		p := product.Product{
 			ID:    1,
 			Name:  "pear watch",
 			Price: 500,
@@ -28,13 +28,13 @@ func TestProductUC_CreateProduct(t *testing.T) {
 	})
 	t.Run("proper slug on collide", func(t *testing.T) {
 		repo.CleanProducts()
-		p := domain.Product{
+		p := product.Product{
 			ID:    1,
 			Name:  "pear watch",
 			Price: 500,
 		}
 		uc.CreateProduct(context.TODO(), &p)
-		p2 := domain.Product{
+		p2 := product.Product{
 			ID:    2,
 			Name:  "pear watch",
 			Price: 500,
@@ -49,7 +49,7 @@ func TestProductUC_CreateProduct(t *testing.T) {
 
 func TestProductUC_DeleteProduct(t *testing.T) {
 	t.Parallel()
-	repo := repository.NewMockProductRepository(map[int64]*domain.Product{
+	repo := repository.NewMockProductRepository(map[int64]*product.Product{
 		0: {
 			ID:    0,
 			Name:  "test",
@@ -75,7 +75,7 @@ func TestProductUC_DeleteProduct(t *testing.T) {
 
 func TestProductUC_UpdateProduct(t *testing.T) {
 	t.Parallel()
-	repo := repository.NewMockProductRepository(map[int64]*domain.Product{
+	repo := repository.NewMockProductRepository(map[int64]*product.Product{
 		0: {
 			ID:    0,
 			Name:  "test",
@@ -86,7 +86,7 @@ func TestProductUC_UpdateProduct(t *testing.T) {
 	cache := repository.NewMockCacheRepository(nil)
 	uc := NewProductUC(repo, cache, zap.NewNop())
 	t.Run("updates the product", func(t *testing.T) {
-		newProduct := domain.Product{
+		newProduct := product.Product{
 			ID:    0,
 			Name:  "lemon",
 			Slug:  "test",
@@ -102,7 +102,7 @@ func TestProductUC_UpdateProduct(t *testing.T) {
 
 func TestProductUC_GetProductBySlug(t *testing.T) {
 	t.Parallel()
-	repo := repository.NewMockProductRepository(map[int64]*domain.Product{
+	repo := repository.NewMockProductRepository(map[int64]*product.Product{
 		0: {
 			ID:    0,
 			Name:  "test",

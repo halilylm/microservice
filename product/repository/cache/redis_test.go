@@ -5,7 +5,7 @@ import (
 	"github.com/alicebob/miniredis"
 	"github.com/go-redis/redis/v9"
 	"github.com/google/uuid"
-	"github.com/halilylm/microservice/domain"
+	"github.com/halilylm/microservice/product"
 	"github.com/halilylm/microservice/product/repository"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -20,18 +20,18 @@ func setupRedis(t *testing.T) repository.ProductCacheRepository {
 	client := redis.NewClient(&redis.Options{
 		Addr: mr.Addr(),
 	})
-	return NewProductRepository(client.Conn())
+	return NewProductRepository(client)
 }
 
 func TestProductRepository_SetProduct(t *testing.T) {
 	productRepo := setupRedis(t)
 	key := uuid.NewString()
-	product := domain.Product{
+	newProduct := product.Product{
 		Name:  "lemon",
 		Slug:  "lemon",
 		Price: 15,
 	}
-	err := productRepo.SetProduct(context.TODO(), key, 10*time.Second, &product)
+	err := productRepo.SetProduct(context.TODO(), key, 10*time.Second, &newProduct)
 	assert.NoError(t, err)
 	assert.Nil(t, err)
 }
@@ -47,7 +47,7 @@ func TestProductRepository_DeleteProduct(t *testing.T) {
 func TestProductRepository_GetProduct(t *testing.T) {
 	productRepo := setupRedis(t)
 	key := uuid.NewString()
-	product := domain.Product{
+	product := product.Product{
 		Name:  "banana watch",
 		Slug:  "banana-watch",
 		Price: 50,

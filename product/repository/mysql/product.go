@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/halilylm/microservice/domain"
+	"github.com/halilylm/microservice/product"
 	"github.com/halilylm/microservice/product/repository"
 )
 
@@ -23,7 +23,7 @@ func NewProductRepository(db *sql.DB) repository.ProductRepository {
 	return &productRepository{db: db}
 }
 
-func (r *productRepository) Insert(ctx context.Context, p *domain.Product) (*domain.Product, error) {
+func (r *productRepository) Insert(ctx context.Context, p *product.Product) (*product.Product, error) {
 	stmt, err := r.db.PrepareContext(ctx, insertQuery)
 	if err != nil {
 		return nil, err
@@ -39,7 +39,7 @@ func (r *productRepository) Insert(ctx context.Context, p *domain.Product) (*dom
 	return p, nil
 }
 
-func (r *productRepository) Update(ctx context.Context, p *domain.Product) (*domain.Product, error) {
+func (r *productRepository) Update(ctx context.Context, p *product.Product) (*product.Product, error) {
 	stmt, err := r.db.PrepareContext(ctx, updateQuery)
 	if err != nil {
 		return nil, err
@@ -77,8 +77,8 @@ func (r *productRepository) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (r *productRepository) GetProductBySlug(ctx context.Context, slug string) (*domain.Product, error) {
-	var product domain.Product
+func (r *productRepository) GetProductBySlug(ctx context.Context, slug string) (*product.Product, error) {
+	var product product.Product
 	if err := r.db.QueryRowContext(ctx, getBySlugQuery, slug).Scan(&product.ID, &product.Name, &product.Slug, &product.Price, &product.CreatedAt, &product.UpdatedAt); err != nil {
 		return nil, err
 	}
